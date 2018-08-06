@@ -106,15 +106,52 @@ export default class {
 
 ```
 ## api
+### store
 import
 ```JAVASCRIPT
 import { fieldValid, classValid } from './validation-class'
 ```
-decorator arguments
+@fieldValid 
 ```JAVASCRIPT
 @fieldValid({
-  require: true, //field is require[boolean]
-  help: "不可为空且未数字", //help message[string]
-  regex: /^[0-9]*$/ //regex[regex]
+  require: true,                            //field is require[boolean]
+  help: "不可为空且未数字",                   //help message[string]
+  regex: /^[0-9]*$/,                       //regex[regex]
+  validator: (value, target, result) => {  //custom validation[function]
+    if (target.building == "123") {
+        result.valid = true
+        result.help = ""
+    } else {
+        result.valid = false
+        result.help = "楼栋必须是123"
+    }
+  }
 })
 ```
+@classValid 
+```JAVASCRIPT
+@classValid({
+    switcher: target => {
+        return target.ready == true    //open or close validate[function]
+    }
+})
+```
+### view
+```JAVASCRIPT
+render() {
+    let valid = this.store.getValidation() //validation class will inject getValidation function into class.
+    return (                               //all the field with @fieldValid will appear in valid
+       <Form>                              //classValid all the field is valid
+            <Col span={6}>
+                <Button disabled={!valid.classValid}>提交</Button>
+            </Col>
+           <Col span={6}>                  
+                <FormItem label="楼盘"{...config}
+                    validateStatus={valid.resblock.valid == true ? "success" : "error"}
+                    help={valid.resblock.help}>
+                    <Input onChange={e => this.store.resblock = e.target.value} />
+                </FormItem>
+            </Col>
+        </Form>
+    )
+}
