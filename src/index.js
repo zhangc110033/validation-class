@@ -1,5 +1,5 @@
 import fieldValid from './fieldValid'
-import formValid from './formValid'
+import classValid from './classValid'
 
 export default fieldValid
-export { fieldValid, formValid }
+export { fieldValid, classValid }
